@@ -1,11 +1,14 @@
 import streamlit as st
-from groq import Groq
+from openai import OpenAI
 
 st.set_page_config(page_title="Zeeshu AI", page_icon="🤖")
 st.title("🤖 Zeeshu AI Chat")
 
-# API Key (Streamlit secrets se aayegi)
-client = Groq(api_key=st.secrets["GROQ_API_KEY"])
+# OpenRouter client
+client = OpenAI(
+    api_key=st.secrets["OPENROUTER_API_KEY"],
+    base_url="https://openrouter.ai/api/v1"
+)
 
 # Chat history
 if "messages" not in st.session_state:
@@ -20,10 +23,14 @@ if prompt := st.chat_input("Apna sawal likhein..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)
 
-    response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=st.session_state.messages
-    )
-    reply = response.choices[0].message.content
+    try:
+        response = client.chat.completions.create(
+            model="deepseek/deepseek-chat-v3-0324:free",
+            messages=st.session_state.messages
+        )
+        reply = response.choices[0].message.content
+    except Exception as e:
+        reply = f"⚠️ Error: {str(e)}"
+
     st.session_state.messages.append({"role": "assistant", "content": reply})
     st.chat_message("assistant").write(reply)
