@@ -25,7 +25,7 @@ if prompt := st.chat_input("Apna sawal likhein..."):
 
     try:
         response = client.chat.completions.create(
-            model="deepseek/deepseek-chat-v3-0324:free",
+          model= "nvidia/nemotron-3.5-super-vl:free",
             messages=st.session_state.messages
         )
         reply = response.choices[0].message.content
